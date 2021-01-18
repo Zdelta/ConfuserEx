@@ -10,10 +10,10 @@ namespace Confuser.Protections {
 
 	[BeforeProtection("Ki.ControlFlow")]
 	internal class AntiDumpV2Protection : Protection {
-		public const string _Id = "Anti Dump";
+		public const string _Id = "Anti Dump V2";
 		public const string _FullId = "Ki.AntiDump";
 
-		public override string Name => "Anti Dump Protection";
+		public override string Name => "Anti Dump Protection V2";
 		public override string Description => "This protection prevents memory dumping.";
 		public override string Id => _Id;
 		public override string FullId => _FullId;
@@ -36,7 +36,7 @@ namespace Confuser.Protections {
 
 			public override ProtectionTargets Targets => ProtectionTargets.Modules;
 
-			public override string Name => "Anti Dump Injection";
+			public override string Name => "Anti Dump Injection V2";
 
 			protected override void Execute(ConfuserContext context, ProtectionParameters parameters) {
 				var rtType = context.Registry.GetService<IRuntimeService>().GetRuntimeType("Confuser.Runtime.AntiDumpV2");

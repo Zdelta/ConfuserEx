@@ -11,12 +11,12 @@ namespace Confuser.Protections {
 
 	[BeforeProtection("Ki.ControlFlow")]
 	internal class AntiDebugV2Protection : Protection {
-		public const string _Id = "Anti Debug";
+		public const string _Id = "Anti Debug V2";
 		public const string _FullId = "Ki.AntiDebug";
 
 		public override string Name {
 			get {
-				return "Anti Debug Protection";
+				return "Anti Debug Protection V2";
 			}
 		}
 
@@ -66,7 +66,7 @@ namespace Confuser.Protections {
 
 			public override string Name {
 				get {
-					return "Anti Debug Injection";
+					return "Anti Debug Injection V2";
 				}
 			}
 

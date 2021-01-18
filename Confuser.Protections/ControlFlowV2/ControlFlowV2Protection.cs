@@ -5,12 +5,12 @@ using dnlib.DotNet;
 namespace Confuser.Protections {
 
 	internal class ControlFlowV2Protection : Protection, IControlFlowService {
-		public const string _Id = "Control Flow";
+		public const string _Id = "Control Flow V2";
 		public const string _FullId = "Ki.ControlFlow";
 		public const string _ServiceId = "Ki.ControlFlow";
 
 		public override string Name {
-			get { return "Control Flow Protection"; }
+			get { return "Control Flow Protection V2"; }
 		}
 
 		public override string Description {

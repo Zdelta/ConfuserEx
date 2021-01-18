@@ -10,7 +10,7 @@ namespace Confuser.Protections {
 
 	public class AntiWatermarkProtection : Protection {
 		public override string Name => "Anti Watermark";
-		public override string Description => "Removes the ProtectedBy watermark to prevent Protector detection.";
+		public override string Description => "Removes the Protected By watermark to prevent Protector detection.";
 		public override string Id => "anti watermark";
 		public override string FullId => "HoLLy.AntiWatermark";
 		public override ProtectionPreset Preset => ProtectionPreset.Normal;
