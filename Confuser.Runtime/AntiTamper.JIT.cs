@@ -4,16 +4,17 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Confuser.Runtime {
+
 	internal static unsafe class AntiTamperJIT {
-		static uint* ptr;
-		static uint len;
-		static IntPtr moduleHnd;
-		static compileMethod originalDelegate;
+		private static uint* ptr;
+		private static uint len;
+		private static IntPtr moduleHnd;
+		private static compileMethod originalDelegate;
 
-		static bool ver4;
-		static bool ver5;
+		private static bool ver4;
+		private static bool ver5;
 
-		static compileMethod handler;
+		private static compileMethod handler;
 
 		public static void Initialize() {
 			Module m = typeof(AntiTamperNormal).Module;
@@ -77,16 +78,18 @@ namespace Confuser.Runtime {
 			var obj = GetFieldValue(hnd, "m_ptr");
 			if (obj is IntPtr) {
 				moduleHnd = (IntPtr)obj;
-			} else if (obj.GetType().ToString() == "System.Reflection.RuntimeModule") {
+			}
+			else if (obj.GetType().ToString() == "System.Reflection.RuntimeModule") {
 				moduleHnd = (IntPtr)GetFieldValue(obj, "m_pData");
-			} else {
+			}
+			else {
 				throw new ApplicationException($"Failed to get pointer for module handle: {hnd.ToString()}");
 			}
 
 			Hook();
 		}
 
-		static object GetFieldValue(object obj, string fieldName) {
+		private static object GetFieldValue(object obj, string fieldName) {
 			var field = obj.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 			if (field == null)
 				throw new ApplicationException($"Could not get field {obj.GetType()}::{fieldName}");
@@ -94,15 +97,15 @@ namespace Confuser.Runtime {
 		}
 
 		[DllImport("kernel32.dll")]
-		static extern IntPtr LoadLibrary(string lib);
+		private static extern IntPtr LoadLibrary(string lib);
 
 		[DllImport("kernel32.dll")]
-		static extern IntPtr GetProcAddress(IntPtr lib, string proc);
+		private static extern IntPtr GetProcAddress(IntPtr lib, string proc);
 
 		[DllImport("kernel32.dll")]
-		static extern bool VirtualProtect(IntPtr lpAddress, uint dwSize, uint flNewProtect, out uint lpflOldProtect);
+		private static extern bool VirtualProtect(IntPtr lpAddress, uint dwSize, uint flNewProtect, out uint lpflOldProtect);
 
-		static void Hook() {
+		private static void Hook() {
 			ulong* ptr = stackalloc ulong[2];
 			if (ver4) {
 				ptr[0] = 0x642e74696a726c63; //clrjit.d
@@ -149,7 +152,7 @@ namespace Confuser.Runtime {
 			VirtualProtect(hookPosition, (uint)IntPtr.Size, oldPl, out oldPl);
 		}
 
-		static void ExtractLocalVars(CORINFO_METHOD_INFO* info, uint len, byte* localVar) {
+		private static void ExtractLocalVars(CORINFO_METHOD_INFO* info, uint len, byte* localVar) {
 			void* sigInfo;
 			if (ver4) {
 				if (IntPtr.Size == 8)
@@ -199,7 +202,7 @@ namespace Confuser.Runtime {
 			}
 		}
 
-		static uint HookHandler(IntPtr self, ICorJitInfo* comp, CORINFO_METHOD_INFO* info, uint flags, byte** nativeEntry, uint* nativeSizeOfCode) {
+		private static uint HookHandler(IntPtr self, ICorJitInfo* comp, CORINFO_METHOD_INFO* info, uint flags, byte** nativeEntry, uint* nativeSizeOfCode) {
 			if (info != null && info->scope == moduleHnd && info->ILCode[0] == 0x14) {
 				uint token;
 				if (ver5) {
@@ -292,13 +295,13 @@ namespace Confuser.Runtime {
 
 		#region JIT internal
 
-		static bool hasLinkInfo;
+		private static bool hasLinkInfo;
 
 		[StructLayout(LayoutKind.Sequential, Size = 0x18)]
-		struct CORINFO_EH_CLAUSE { }
+		private struct CORINFO_EH_CLAUSE { }
 
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
-		struct CORINFO_METHOD_INFO {
+		private struct CORINFO_METHOD_INFO {
 			public IntPtr ftn;
 			public IntPtr scope;
 			public byte* ILCode;
@@ -306,25 +309,25 @@ namespace Confuser.Runtime {
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		struct CORINFO_SIG_INFO_x64 {
+		private struct CORINFO_SIG_INFO_x64 {
 			public uint callConv;
-			uint pad1;
+			private uint pad1;
 			public IntPtr retTypeClass;
 			public IntPtr retTypeSigClass;
 			public byte retType;
 			public byte flags;
 			public ushort numArgs;
-			uint pad2;
+			private uint pad2;
 			public CORINFO_SIG_INST_x64 sigInst;
 			public IntPtr args;
 			public IntPtr sig;
 			public IntPtr scope;
 			public uint token;
-			uint pad3;
+			private uint pad3;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		struct CORINFO_SIG_INFO_x86 {
+		private struct CORINFO_SIG_INFO_x86 {
 			public uint callConv;
 			public IntPtr retTypeClass;
 			public IntPtr retTypeSigClass;
@@ -339,18 +342,18 @@ namespace Confuser.Runtime {
 		}
 
 		[StructLayout(LayoutKind.Sequential, Size = 32)]
-		struct CORINFO_SIG_INST_x64 { }
+		private struct CORINFO_SIG_INST_x64 { }
 
 		[StructLayout(LayoutKind.Sequential, Size = 16)]
-		struct CORINFO_SIG_INST_x86 { }
+		private struct CORINFO_SIG_INST_x86 { }
 
 		[StructLayout(LayoutKind.Sequential)]
-		struct ICorClassInfo {
+		private struct ICorClassInfo {
 			public readonly IntPtr* vfptr;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		struct ICorDynamicInfo {
+		private struct ICorDynamicInfo {
 			public IntPtr* vfptr;
 			public int* vbptr;
 
@@ -360,7 +363,7 @@ namespace Confuser.Runtime {
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		struct ICorJitInfo {
+		private struct ICorJitInfo {
 			public IntPtr* vfptr;
 			public int* vbptr;
 
@@ -371,17 +374,17 @@ namespace Confuser.Runtime {
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		struct ICorMethodInfo {
+		private struct ICorMethodInfo {
 			public IntPtr* vfptr;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		struct ICorModuleInfo {
+		private struct ICorModuleInfo {
 			public IntPtr* vfptr;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		struct ICorStaticInfo {
+		private struct ICorStaticInfo {
 			public IntPtr* vfptr;
 			public int* vbptr;
 
@@ -398,10 +401,10 @@ namespace Confuser.Runtime {
 			}
 		}
 
-		#endregion
+		#endregion JIT internal
 
-		class CorMethodInfoHook {
-			static int ehNum = -1;
+		private class CorMethodInfoHook {
+			private static int ehNum = -1;
 			public CORINFO_EH_CLAUSE* clauses;
 			public IntPtr ftn;
 			public ICorMethodInfo* info;
@@ -411,7 +414,7 @@ namespace Confuser.Runtime {
 			public getEHinfo o_getEHinfo;
 			public IntPtr* oldVfTbl;
 
-			void hookEHInfo(IntPtr self, IntPtr ftn, uint EHnumber, CORINFO_EH_CLAUSE* clause) {
+			private void hookEHInfo(IntPtr self, IntPtr ftn, uint EHnumber, CORINFO_EH_CLAUSE* clause) {
 				if (ftn == this.ftn) {
 					*clause = clauses[EHnumber];
 				}
@@ -465,7 +468,7 @@ namespace Confuser.Runtime {
 			}
 		}
 
-		class CorJitInfoHook {
+		private class CorJitInfoHook {
 			public CORINFO_EH_CLAUSE* clauses;
 			public IntPtr ftn;
 			public ICorJitInfo* info;
@@ -475,7 +478,7 @@ namespace Confuser.Runtime {
 			public getEHinfo o_getEHinfo;
 			public IntPtr* oldVfTbl;
 
-			void hookEHInfo(IntPtr self, IntPtr ftn, uint EHnumber, CORINFO_EH_CLAUSE* clause) {
+			private void hookEHInfo(IntPtr self, IntPtr ftn, uint EHnumber, CORINFO_EH_CLAUSE* clause) {
 				if (ftn == this.ftn) {
 					*clause = clauses[EHnumber];
 				}
@@ -516,7 +519,7 @@ namespace Confuser.Runtime {
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		struct MethodData {
+		private struct MethodData {
 			public readonly uint ILCodeSize;
 			public readonly uint MaxStack;
 			public readonly uint EHCount;
@@ -526,14 +529,14 @@ namespace Confuser.Runtime {
 		}
 
 		[UnmanagedFunctionPointer(CallingConvention.StdCall)]
-		delegate uint compileMethod(IntPtr self, ICorJitInfo* comp, CORINFO_METHOD_INFO* info, uint flags, byte** nativeEntry, uint* nativeSizeOfCode);
+		private delegate uint compileMethod(IntPtr self, ICorJitInfo* comp, CORINFO_METHOD_INFO* info, uint flags, byte** nativeEntry, uint* nativeSizeOfCode);
 
 		[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
-		delegate void getEHinfo(IntPtr self, IntPtr ftn, uint EHnumber, CORINFO_EH_CLAUSE* clause);
+		private delegate void getEHinfo(IntPtr self, IntPtr ftn, uint EHnumber, CORINFO_EH_CLAUSE* clause);
 
-		delegate IntPtr* getJit();
+		private delegate IntPtr* getJit();
 
 		[UnmanagedFunctionPointer(CallingConvention.ThisCall)]
-		delegate uint getMethodDefFromMethod(IntPtr self, IntPtr ftn);
+		private delegate uint getMethodDefFromMethod(IntPtr self, IntPtr ftn);
 	}
 }

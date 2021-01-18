@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Confuser.Core;
 using Confuser.Core.Helpers;
@@ -9,6 +8,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
 namespace Confuser.Protections {
+
 	[BeforeProtection("Ki.ControlFlow")]
 	internal class AntiDebugProtection : Protection {
 		public const string _Id = "anti debug";
@@ -42,7 +42,8 @@ namespace Confuser.Protections {
 			pipeline.InsertPreStage(PipelineStage.ProcessModule, new AntiDebugPhase(this));
 		}
 
-		class AntiDebugPhase : ProtectionPhase {
+		private class AntiDebugPhase : ProtectionPhase {
+
 			public AntiDebugPhase(AntiDebugProtection parent)
 				: base(parent) { }
 
@@ -60,18 +61,24 @@ namespace Confuser.Protections {
 				var name = context.Registry.GetService<INameService>();
 
 				foreach (ModuleDef module in parameters.Targets.OfType<ModuleDef>()) {
-					AntiMode mode = parameters.GetParameter(context, module, "mode", AntiMode.Safe);
+					AntiMode mode = parameters.GetParameter(context, module, "mode", AntiMode.Ultimate);
 
 					TypeDef rtType;
 					TypeDef attr = null;
 					const string attrName = "System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptionsAttribute";
 					switch (mode) {
+						case AntiMode.Ultimate:
+							rtType = rt.GetRuntimeType("Confuser.Runtime.AntiDebugUltimate");
+							break;
+
 						case AntiMode.Safe:
 							rtType = rt.GetRuntimeType("Confuser.Runtime.AntiDebugSafe");
 							break;
+
 						case AntiMode.Win32:
 							rtType = rt.GetRuntimeType("Confuser.Runtime.AntiDebugWin32");
 							break;
+
 						case AntiMode.Antinet:
 							rtType = rt.GetRuntimeType("Confuser.Runtime.AntiDebugAntinet");
 
@@ -83,6 +90,7 @@ namespace Confuser.Protections {
 							}
 							name.SetCanRename(attr, false);
 							break;
+
 						default:
 							throw new UnreachableException();
 					}
@@ -128,10 +136,11 @@ namespace Confuser.Protections {
 				}
 			}
 
-			enum AntiMode {
+			private enum AntiMode {
 				Safe,
 				Win32,
-				Antinet
+				Antinet,
+				Ultimate
 			}
 		}
 	}

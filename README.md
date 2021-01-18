@@ -1,3 +1,88 @@
+
+
+# ConfuserEx 插件集成版
+
+本软件基于 ConfuserEx 增加以下保护插件：
+
+插件库1：https://github.com/RivaTesu/ConfuserEx-Additions/
+
+> Anti DnSpy, based on NETGuard
+>
+> Anti Virtual Machine, edited from the old source of PerplexDotNet
+>
+> Hide Calls Protection, edited from InvalidMetadataProtection of the Noisette-Obfuscator
+>
+> MD5Sum, based on stackoverflow posts
+>
+> New Renamer, edited from the old source of SunshineNET
+>
+> Header Protection, from my repository Anti-Memory-Dumping
+>
+> Mutate Constants, from my old protector
+>
+> New Control Flow, modified version of IntControlFlow from GabTeix
+>
+> Reduce Metadata Optimization, from my old protector
+>
+> The rest are editions of the original protections
+
+
+
+插件库2：https://github.com/koaie/ConfuserEx-Additions-v2
+
+> ##### - AntiDe4dot:
+>
+> - Prevents usage of De4Dot.
+>
+> ##### - AntiDebug_v2:
+>
+> - This protection prevents the assembly from being debugged or profiled.
+>
+> ##### - AntiWatermark:
+>
+> - Removes the ProtectedBy watermark to prevent Protector detection.
+>
+> ##### - Constant:
+>
+> - This protection encodes and compresses constants in the code.
+>
+> ##### - Constant_v2:
+>
+> - This protection mangles the code in the methods so that decompilers cannot decompile the methods
+>
+> ##### - EreaseHeader:
+>
+> - This protection flood the module.cctor.
+>
+> ##### - OpCodeProt:
+>
+> - Protects OpCodes such as Ldlfd.
+>
+> ##### - FakeObfuscator:
+>
+> - Confuses obfuscators like de4dot by adding types typical to other obfuscators.
+>
+> ##### - IntergrityChecker:
+>
+> - This protection hashs the module to preventing file modifications.
+>
+> ##### - JIT Antitamper:
+>
+> - This protection ensures the integrity of application.
+>
+> ##### - LocaltoField:
+>
+> - This protection marks the module with a attribute that discourage ILDasm from disassembling it.
+
+
+
+---
+
+==以下为原 README.md 内容==
+
+
+========
+
 # ConfuserEx
 
 [![Build status][img_build]][build]

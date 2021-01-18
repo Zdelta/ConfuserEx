@@ -3,8 +3,9 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Confuser.Runtime {
+
 	internal class RefProxyKey : Attribute {
-		readonly int key;
+		private readonly int key;
 
 		public RefProxyKey(int key) {
 			this.key = Mutation.Placeholder(key);
@@ -16,6 +17,7 @@ namespace Confuser.Runtime {
 	}
 
 	internal static class RefProxyStrong {
+
 		internal static void Initialize(RuntimeFieldHandle field, byte opKey) {
 			FieldInfo fieldInfo = FieldInfo.GetFieldFromHandle(field);
 			byte[] sig = fieldInfo.Module.ResolveSignature(fieldInfo.MetadataToken);
@@ -35,7 +37,6 @@ namespace Confuser.Runtime {
 			Type delegateType = fieldInfo.FieldType;
 			if (method.IsStatic)
 				fieldInfo.SetValue(null, Delegate.CreateDelegate(delegateType, (MethodInfo)method));
-
 			else {
 				DynamicMethod dm = null;
 				Type[] argTypes = null;
